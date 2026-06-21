@@ -35,15 +35,16 @@ def main():
   parser.add_argument("path", help="Path to the log file.")
   parser.add_argument("--keyword", default="FAILED", help="Keyword to flag (default: FAILED)")
   parser.add_argument("--threshold", type=int, default=2, help="Repeat count to flag as suspicious (default: 2)")
+  args = parser.parse_args()
   
-  ip_counts, unmatched, total flagged = parse_log(args.path, args.keyword, args.threshold)
+  ip_counts, unmatched, total_flagged = parse_log(args.path, args.keyword, args.threshold)
   
   print(f"Total '{args.keyword}' entries: {total_flagged}")
   print(f"Entries with no IP address: {unmatched}\n")
   
   print("Failures by source IP: ")
   for ip, count in ip_counts.most_common():
-    flag = " <-- repeated failure pattern" if count >= args.threshold]
+    flag = " <-- repeated failure pattern" if count >= args.threshold else ""
     print(f" {ip}: {count}{flag}")
   
   repeat_offenders = [ip for ip, c in ip_counts.items() if c >= args.threshold]
